@@ -4,13 +4,9 @@ require('fzf-lua').setup({
     width = 1,
     row = 0.99,
     col = 0.50,
-    -- height           = 0.5,            -- window height
-    -- width            = 1,            -- window width
-    -- row              = 0.9,            -- window row position (0=top, 1=bottom)
-    -- col              = 1,            -- window col position (0=left, 1=right)
     border = { ' ', '─', ' ', ' ', ' ', ' ', ' ', ' ' },
     preview = {
-      hidden         = 'hidden',      -- hidden|nohidden
+      hidden = 'hidden',
     },
   },
   files = {
