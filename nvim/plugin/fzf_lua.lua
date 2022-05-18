@@ -16,6 +16,8 @@ require('fzf-lua').setup({
       'find .',
       '-type f',
       '-not -path "*node_modules*"',
+      '-not -path "*.settings*"',
+      '-not -path "*target*"',
       '-not -path "*build*"',
       '-not -path "*/.git/*"',
       '-printf "%P\n"',

@@ -1,11 +1,13 @@
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
+  require 'jdtls.setup'.add_commands()
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   -- See `:help vim.lsp.*` for documentation on any of the below functions
+  local opts = { noremap = true, silent = true }
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -19,6 +21,27 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+  require 'formatter'.setup {
+    filetype = {
+      java = {
+        function()
+          return {
+            exe = 'java',
+            args = { '-jar', os.getenv('HOME') .. '/google-java-format-1.15.0-all-deps.jar', vim.api.nvim_buf_get_name(0) },
+            stdin = true
+          }
+        end
+      }
+    }
+  }
+
+  vim.api.nvim_exec(
+    [[ augroup FormatAutogroup
+      autocmd!
+      autocmd BufWritePost *.java FormatWrite
+    augroup end]], true)
+
 end
 
 -- Add additional capabilities supported by nvim-cmp
