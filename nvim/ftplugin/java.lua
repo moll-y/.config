@@ -22,13 +22,18 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
+  local util = require "formatter.util"
   require 'formatter'.setup {
     filetype = {
       java = {
         function()
           return {
             exe = 'java',
-            args = { '-jar', os.getenv('HOME') .. '/google-java-format-1.15.0-all-deps.jar', vim.api.nvim_buf_get_name(0) },
+            args = {
+              '-jar',
+              '/opt/google-java-format/lib/google-java-format-1.15.0-all-deps.jar',
+              util.escape_path(util.get_current_buffer_file_path()),
+            },
             stdin = true
           }
         end
@@ -47,7 +52,6 @@ end
 -- Add additional capabilities supported by nvim-cmp
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
-
 
 -- If you started neovim within `~/dev/xy/project-1` this would resolve to `project-1`
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
