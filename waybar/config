@@ -1,0 +1,28 @@
+{
+  "layer": "top",
+    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-center": [],
+    "position": "bottom",
+    "modules-right": ["network", "pulseaudio", "cpu", "memory", "clock"],
+    "pulseaudio": {
+      "tooltip": false,
+      "scroll-step": 5,
+      "format": "{icon} {volume}%",
+      "format-icons": {
+        "default": ["奄", "奔", "墳"]
+      }
+    },
+    "network": {
+      "tooltip": false,
+      "format-wifi": "{essid} {ipaddr}",
+      "format-ethernet": "{ipaddr}"
+    },
+    "cpu": {
+      "tooltip": false,
+      "format": "{}%"
+    },
+    "memory": {
+      "tooltip": false,
+      "format": " {}%"
+    }
+}

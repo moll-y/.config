@@ -1,0 +1,58 @@
+* {
+  border: none;
+  border-radius: 0;
+  font-family: Nerd Font Hack;
+  font-size: 12px;
+  transition: none;
+}
+
+window#waybar {
+  background: transparent;
+}
+
+#workspaces {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+#workspaces button {
+  color: #f8f8f2;
+  background: transparent;
+}
+
+#workspaces button.focused {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#workspaces button:hover {
+  box-shadow: inherit;
+  text-shadow: inherit;
+  color: #ff79c6;
+}
+
+#network, #pulseaudio, #cpu, #memory, #clock {
+  padding-left: 16px;
+  padding-right: 16px;
+  color: white;
+}
+
+#network {
+  background: rgba(52, 51, 48, 0.8);
+}
+
+#pulseaudio {
+  background: rgba(69, 70, 42, 0.8);
+}
+
+#cpu {
+  background: rgba(126, 89, 32, 0.8);
+}
+
+#memory {
+  background: rgba(220, 133, 31, 0.8);
+}
+
+#clock {
+  color: black;
+  background: rgba(255, 167, 55, 0.8);
+}
