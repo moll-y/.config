@@ -1,0 +1,33 @@
+--[[
+local M = {
+	"williamboman/mason.nvim",
+
+	-- Make sure we load this during startup if it is your main colorscheme
+	lazy = false,
+
+	-- Make sure to load this before all the other start plugins
+	priority = 999, 
+
+	dependencies = {
+		"williamboman/mason-lspconfig.nvim",
+	},
+}
+
+function M.config()
+	require("mason").setup({
+		ui = {
+			icons = {
+				package_pending = "➜",
+				package_installed = "✓",
+				package_uninstalled = "✗"
+			}
+		}
+	})
+
+	require("mason-lspconfig").setup({
+		automatic_installation = true
+	})
+end
+
+return M
+]]--
