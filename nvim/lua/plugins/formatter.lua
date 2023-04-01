@@ -1,81 +1,62 @@
-local M = {
+--[[
+  Formatter
+]]
+--
+return {
 	"mhartington/formatter.nvim",
-}
-
-function M.config()
-	require("formatter").setup({
+	keys = {
+		{ "<leader>F", "<Cmd>Format<CR>" },
+	},
+	opts = {
 		logging = true,
 		log_level = 2,
-		filetype = {
-			lua = {
-				function()
-					return {
-						exe = "stylua",
-						args = { "-" },
-						stdin = true,
-					}
-				end,
-			},
-			cs = {
-				function()
-					return {
-						exe = "dotnet csharpier",
-						args = {
-							"--write-stdout",
-						},
-						stdin = true,
-					}
-				end,
-			},
-			svelte = {
-				function()
-					return {
-						exe = "prettier",
-						args = {
-							"--stdin-filepath",
-							vim.fn.fnameescape(vim.api.nvim_buf_get_name(0)),
-						},
-						stdin = true,
-					}
-				end,
-			},
-			typescript = {
-				function()
-					return {
-						exe = "prettier",
-						args = {
-							"--stdin-filepath",
-							vim.fn.fnameescape(vim.api.nvim_buf_get_name(0)),
-						},
-						stdin = true,
-					}
-				end,
-			},
-			typescriptreact = {
-				function()
-					return {
-						exe = "prettier",
-						args = {
-							"--stdin-filepath",
-							vim.fn.fnameescape(vim.api.nvim_buf_get_name(0)),
-						},
-						stdin = true,
-					}
-				end,
-			},
-			rust = {
-				function()
-					return {
-						exe = "rustfmt",
-						args = { "--emit=stdout" },
-						stdin = true,
-					}
-				end,
-			},
-		},
-	})
+		filetype = (function()
+			local filetype = {
+				rust = {
+					function()
+						return {
+							exe = "rustfmt",
+							args = { "--emit=stdout" },
+							stdin = true,
+						}
+					end,
+				},
+				lua = {
+					function()
+						return {
+							exe = "stylua",
+							args = { "-" },
+							stdin = true,
+						}
+					end,
+				},
+				cs = {
+					function()
+						return {
+							exe = "dotnet csharpier",
+							args = {
+								"--write-stdout",
+							},
+							stdin = true,
+						}
+					end,
+				},
+			}
 
-	vim.keymap.set("n", "<leader>F", "<Cmd>Format<CR>")
-end
+			for _, v in ipairs({ "yaml", "svelte", "typescript", "javascript", "typescriptreact" }) do
+				filetype[v] = function()
+					return {
+						exe = "prettier",
+						args = {
+							"--stdin-filepath",
+							vim.fn.fnameescape(vim.api.nvim_buf_get_name(0)),
+						},
+						stdin = true,
+					}
+				end
+			end
 
-return M
+			return filetype
+		end)(),
+	},
+}

@@ -2,7 +2,6 @@
   Init.lua
 ]]
 --
-
 -- Boostrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -126,5 +125,4 @@ vim.opt.undofile = true -- Persist undo history to an undo file.
 
 -- Make sure to set `mapleader` before lazy.nvim so your mappings are correct
 vim.g.mapleader = " "
-
 require("lazy").setup("plugins")
