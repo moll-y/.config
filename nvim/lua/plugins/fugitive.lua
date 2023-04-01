@@ -3,6 +3,6 @@
 ]]
 --
 return {
-	"tpope/vim-fugitive",
-	config = false,
+  "tpope/vim-fugitive",
+  config = false,
 }
