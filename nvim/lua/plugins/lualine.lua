@@ -9,7 +9,7 @@ return {
   },
   opts = {
     options = {
-      theme = "catppuccin",
+      theme = "gruvbox",
       globalstatus = true,
       refresh = {
         statusline = 100,
