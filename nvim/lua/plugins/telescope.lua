@@ -16,7 +16,7 @@ return {
   },
   keys = {
     {
-      "<C-p>",
+      "<C-e>",
       function()
         if not pcall(require("telescope.builtin").git_files) then
           print(".git not found")
