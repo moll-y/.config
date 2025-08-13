@@ -1,69 +1,16 @@
---[[
-  Lualine
-]]
---
 return {
-  "nvim-lualine/lualine.nvim",
-  dependencies = {
-    "Isrothy/lualine-diagnostic-message",
-  },
-  opts = {
-    options = {
-      theme = "gruvbox",
-      globalstatus = true,
-      refresh = {
-        statusline = 100,
-        tabline = 100,
-        winbar = 100,
-      },
-    },
-    sections = {
-      lualine_a = {
-        {
-          "mode",
-          icons_enabled = true,
-          padding = 2,
-        },
-      },
-      lualine_b = {
-        {
-          "filename",
-          separator = "|",
-        },
-        "diagnostics",
-      },
-      lualine_c = {
-        "diagnostic-message",
-      },
-      lualine_x = {},
-      lualine_y = {
-        {
-          "progress",
-          separator = "|",
-        },
-        {
-          "location",
-          separator = "|",
-        },
-        "filesize",
-      },
-      lualine_z = {
-        {
-          "filetype",
-          padding = 2,
-        },
-      },
-    },
-    tabline = {
-      lualine_a = { "buffers" },
-      lualine_b = { "branch" },
-      lualine_c = { "filename" },
-      lualine_x = {},
-      lualine_y = {},
-      lualine_z = { "tabs" },
-    },
-    winbar = {},
-    inactive_winbar = {},
-    extensions = { "quickfix" },
-  },
+	"nvim-lualine/lualine.nvim",
+	dependencies = { "nvim-tree/nvim-web-devicons" },
+	config = function()
+		local theme = require("lualine.themes.gruvbox")
+		local lualine_modes = { "insert", "normal", "visual", "command", "replace", "inactive", "terminal" }
+		for _, field in ipairs(lualine_modes) do
+			if theme[field] and theme[field].c then
+				theme[field].c.bg = "none"
+			end
+		end
+		require("lualine").setup({ options = { theme = theme } })
+		vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
+		vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
+	end,
 }
