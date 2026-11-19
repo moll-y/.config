@@ -1,0 +1,36 @@
+#!/bin/sh
+# Keeps Slack and Firefox from taking over the machine (started by the sway config).
+#   CPU: their processes run at lower priority (nice 10), so my terminal and builds go first.
+#   Memory: if free memory stays under 10% for 10 seconds, close Slack; if it is still low,
+#   close Firefox. They get asked to quit (Firefox saves its tabs), and are killed after 10 s.
+limit=10     # % of memory available, below this counts as "low"
+need=5       # checks in a row (every 2 s) before closing something
+
+apps='^(slack|/usr/lib/(slack|firefox[^/]*)/)' # every process of both apps (Firefox tabs too)
+low=0
+
+close() { # close() NAME: ask the app to quit, kill it if it is still there after 10 s
+	pkill -TERM -x "$1" || return 1
+	notify-send -u critical "Low memory" "Closed $1 to free memory" 2>/dev/null
+	for _ in 1 2 3 4 5 6 7 8 9 10; do
+		pgrep -x "$1" >/dev/null || return 0
+		sleep 1
+	done
+	pkill -KILL -x "$1"
+}
+
+while :; do
+	pgrep -f "$apps" | xargs -r renice -n 10 -p >/dev/null 2>&1
+
+	free=$(awk '/^MemTotal/ {t=$2} /^MemAvailable/ {a=$2} END {print int(a * 100 / t)}' /proc/meminfo)
+	if [ "$free" -lt "$limit" ]; then
+		low=$((low + 1))
+	else
+		low=0
+	fi
+	if [ "$low" -ge "$need" ]; then
+		close slack || close firefox
+		low=0
+	fi
+	sleep 2
+done

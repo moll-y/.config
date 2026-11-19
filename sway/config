@@ -28,6 +28,8 @@ set $menu bemenu-run -i -H 26 --hp 8 -p '(｀・ω・´) »' --fn 'JetBrainsMono
 # Wallpaper (all wallpapers live in ~/.config/wallpapers/)
 exec awww-daemon
 exec_always sleep 1 && awww img ~/.config/wallpapers/house-garden.png --resize crop
+# Slack and Firefox: lower CPU priority; closed first when memory runs low (see the script)
+exec ~/.config/sway/app-guard
 #
 # Example configuration:
 #

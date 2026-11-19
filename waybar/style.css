@@ -58,7 +58,7 @@ window#waybar {
 	font-size: 15px;
 }
 
-/* V, C, M and the clock: gruvbox hues (lime, yellow-green, yellow, orange), as saturated as the old colors (warning: dark orange) */
+/* V, C, M and the clock: gruvbox hues (lime, yellow-green, yellow, orange), as saturated as the old colors */
 #pulseaudio {
 	background: #9bd40b;
 }
@@ -75,14 +75,14 @@ window#waybar {
 	background: #e56d0b;
 }
 
-/* cpu/memory "states" in the config: warning above 50%, critical above 90% (cpu) / 80% (memory) */
+/* cpu/memory "states" in the config: warning above 50%, critical above 90% (cpu) / 80% (memory).
+   Only the text changes color: the block keeps its color, so the arrows next to it still match. */
 #cpu.warning, #memory.warning {
-	background: #c4400b;
+	color: #c4400b; /* dark orange */
 }
 
 #cpu.critical, #memory.critical {
-	background: #ff4365;
-	color: white;
+	color: #b00020; /* deep red */
 }
 
 /* Arrows between the right-side blocks: fg = the block on its right, bg = the block on its left */

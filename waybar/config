@@ -47,7 +47,7 @@
 		"format-muted": "V muted"
 	},
 	"cpu": {
-		"format": "C {usage}%",
+		"format": "C {usage:2}%",
 		"states": {
 			"warning": 50,
 			"critical": 90
@@ -55,7 +55,7 @@
 		"interval": 1
 	},
 	"memory": {
-		"format": "M {percentage}%",
+		"format": "M {percentage:2}%",
 		"states": {
 			"warning": 50,
 			"critical": 80
