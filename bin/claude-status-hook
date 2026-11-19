@@ -1,0 +1,59 @@
+#!/bin/sh
+# Claude Code hook: records each session's state, for the sway bar and the tmux windows.
+#   ~/.cache/claude-status/<session_id>  one line: "<state> <claude pid> <tmux pane>"
+#   state: working (running a tool / thinking), done (waiting for my next prompt), needs (asks permission or a question)
+# Then: marks the session's tmux window (@claude option) and asks waybar to redraw (signal 8).
+# Wired in settings.json of ~/.claude, ~/.claude-work and ~/.claude-me for every hook event.
+dir=${XDG_CACHE_HOME:-$HOME/.cache}/claude-status
+mkdir -p "$dir"
+
+read -r event session ntype tool <<EOF
+$(jq -r '[.hook_event_name, .session_id, (.notification_type // "-"), (.tool_name // "-")] | @tsv')
+EOF
+[ -n "$session" ] || exit 0
+
+case $event in
+	SessionEnd) state= ;;
+	SessionStart | Stop) state=done ;;
+	PreToolUse) [ "$tool" = AskUserQuestion ] && state=needs || state=working ;; # a question to me = needs me
+	UserPromptSubmit | PostToolUse) state=working ;;
+	Notification) [ "$ntype" = permission_prompt ] && state=needs || exit 0 ;;
+	*) exit 0 ;;
+esac
+
+# Claude's own pid (walk up from this hook), so the bar can drop sessions that died without SessionEnd
+pid=$PPID
+while [ "$pid" -gt 1 ] && [ "$(cat /proc/$pid/comm 2>/dev/null)" != claude ]; do
+	pid=$(awk '{print $4}' /proc/$pid/stat 2>/dev/null || echo 1)
+done
+
+if [ -z "$state" ]; then
+	rm -f "$dir/$session"
+else
+	echo "$state $pid ${TMUX_PANE:--}" >"$dir/$session"
+fi
+
+# tmux: the window shows the most urgent state of the Claude sessions running in it
+if [ -n "$TMUX_PANE" ]; then
+	win=$(tmux display -p -t "$TMUX_PANE" '#{window_id}' 2>/dev/null)
+	panes=$(tmux list-panes -t "$win" -F '#{pane_id}' 2>/dev/null)
+	best=
+	for f in "$dir"/*; do
+		[ -f "$f" ] || continue
+		read -r s _ p <"$f"
+		echo "$panes" | grep -qx -- "$p" || continue
+		case $s in
+			needs) best=needs ;;
+			working) [ "$best" = needs ] || best=working ;;
+			done) [ -n "$best" ] || best=done ;;
+		esac
+	done
+	if [ -n "$best" ]; then
+		tmux set -w -t "$win" @claude "$best"
+	else
+		tmux set -wu -t "$win" @claude
+	fi
+fi
+
+pkill -RTMIN+8 -x waybar 2>/dev/null
+exit 0
