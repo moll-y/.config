@@ -11,6 +11,7 @@ return {
 		view = { width = 32 },
 		renderer = {
 			group_empty = true, -- show a/b/c as one line when the folders only hold each other
+			indent_markers = { enable = true }, -- lines that show which folder each file is in
 			-- git marks: the same letters as `git status -s`
 			icons = {
 				glyphs = {
