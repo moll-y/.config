@@ -16,7 +16,12 @@ set $right l
 # Your preferred terminal emulator
 set $term alacritty
 # Your preferred application launcher
-set $menu bemenu-run
+# Launcher: bemenu as one plain strip at the top (like catppuccin/bemenu): one solid black
+# background, white text; only the kaomoji prompt (pink) and the selected app (yellow) have color.
+set $menu bemenu-run -i -H 26 --hp 8 -p '(｀・ω・´) »' --fn 'JetBrainsMono Nerd Font Bold 11' \
+    --tb '#000000' --tf '#ff4365' --fb '#000000' --ff '#ffffff' \
+    --nb '#000000' --nf '#ffffff' --ab '#000000' --af '#ffffff' \
+    --hb '#000000' --hf '#ffc107'
 
 ### Output configuration
 #
