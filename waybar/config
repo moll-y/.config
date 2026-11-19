@@ -1,28 +1,81 @@
 {
-  "layer": "top",
-    "modules-left": ["sway/workspaces", "sway/mode"],
-    "modules-center": [],
-    "position": "bottom",
-    "modules-right": ["network", "pulseaudio", "cpu", "memory", "clock"],
-    "pulseaudio": {
-      "tooltip": false,
-      "scroll-step": 5,
-      "format": "{icon} {volume}%",
-      "format-icons": {
-        "default": ["奄", "奔", "墳"]
-      }
-    },
-    "network": {
-      "tooltip": false,
-      "format-wifi": "{essid} {ipaddr}",
-      "format-ethernet": "{ipaddr}"
-    },
-    "cpu": {
-      "tooltip": false,
-      "format": "{}%"
-    },
-    "memory": {
-      "tooltip": false,
-      "format": " {}%"
-    }
+	"layer": "top",
+	"modules-left": ["sway/workspaces", "sway/mode"],
+	"modules-center": [],
+	"position": "bottom",
+	"margin-left": 2,
+	"margin-right": 2,
+	"margin-top": 2,
+	"margin-bottom": 2,
+	"modules-right": ["custom/claude-arrow", "custom/claude", "custom/claude-arrow2", "pulseaudio", "custom/arrow3", "cpu", "custom/arrow4", "memory", "custom/arrow5", "clock"],
+	// Powerline arrows (U+E0B2) between the right-side blocks; colors in style.css
+	"custom/arrow3": { "format": "", "tooltip": false },
+	"custom/arrow4": { "format": "", "tooltip": false },
+	"custom/arrow5": { "format": "", "tooltip": false },
+	"sway/workspaces": {
+		"format": "{icon}",
+		"format-icons": {
+			"1": "一", "2": "二", "3": "三", "4": "四", "5": "五",
+			"6": "六", "7": "七", "8": "八", "9": "九", "10": "十"
+		}
+	},
+	// One indicator for all Claude sessions (see the script). Redrawn every 5 s, and at once when
+	// a Claude hook sends signal 8 (claude-status-hook).
+	"custom/claude": {
+		// keeps running: a new line every 0.25s while working (flicker), else every second (needs blink)
+		"exec": "~/.config/waybar/scripts/claude-status watch",
+		"return-type": "json"
+	},
+	"custom/claude-arrow": {
+		"exec": "~/.config/waybar/scripts/claude-status arrow",
+		"return-type": "json",
+		"interval": 5,
+		"signal": 8,
+		"tooltip": false
+	},
+	"custom/claude-arrow2": {
+		"exec": "~/.config/waybar/scripts/claude-status arrow",
+		"return-type": "json",
+		"interval": 5,
+		"signal": 8,
+		"tooltip": false
+	},
+	"pulseaudio": {
+		"tooltip": false,
+		"scroll-step": 5,
+		"format": "V {volume}%",
+		"format-muted": "V muted"
+	},
+	"cpu": {
+		"format": "C {usage}%",
+		"states": {
+			"warning": 50,
+			"critical": 90
+		},
+		"interval": 1
+	},
+	"memory": {
+		"format": "M {percentage}%",
+		"states": {
+			"warning": 50,
+			"critical": 80
+		}
+	},
+	"clock": {
+		"format": "{:%d/%m %I:%M %p}",
+		"tooltip-format": "<tt>{calendar}</tt>",
+		"calendar": {
+			"mode": "year",
+			"mode-mon-col": 3,
+			"weeks-pos": "right",
+			"on-scroll": 1,
+			"format": {
+				"months": "<span color='#ffead3'><b>{}</b></span>",
+				"days": "<span color='#ecc6d9'><b>{}</b></span>",
+				"weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+				"weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+				"today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+			}
+		}
+	}
 }

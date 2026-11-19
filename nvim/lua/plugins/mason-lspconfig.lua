@@ -8,6 +8,8 @@ return {
 			"clangd",
 			"gopls",
 		},
+		-- stylua is a formatter (run by conform), not a language server
+		automatic_enable = { exclude = { "stylua", "jdtls" } },
 	},
 	dependencies = {
 		{ "mason-org/mason.nvim", opts = {} },

@@ -1,69 +1,50 @@
+-- nvim-treesitter "main" branch (the one that supports Neovim 0.12). Needs the tree-sitter CLI.
+-- Incremental selection is built into Neovim now: in visual mode, `an` grows and `in` shrinks.
+local languages = {
+	"bash",
+	"c",
+	"diff",
+	"go",
+	"gomod",
+	"html",
+	"java",
+	"javascript",
+	"jsdoc",
+	"json",
+	"kotlin",
+	"lua",
+	"luadoc",
+	"luap",
+	"markdown",
+	"markdown_inline",
+	"printf",
+	"python",
+	"query",
+	"regex",
+	"sql",
+	"toml",
+	"tsx",
+	"typescript",
+	"vim",
+	"vimdoc",
+	"xml",
+	"yaml",
+}
+
 return {
 	"nvim-treesitter/nvim-treesitter",
-	version = false,
+	branch = "main",
+	lazy = false,
 	build = ":TSUpdate",
-	lazy = vim.fn.argc(-1) == 0,
-	init = function(plugin)
-		require("lazy.core.loader").add_to_rtp(plugin)
-		require("nvim-treesitter.query_predicates")
+	config = function()
+		require("nvim-treesitter").install(languages)
+		vim.api.nvim_create_autocmd("FileType", {
+			callback = function(args)
+				-- pcall: skip filetypes that have no parser
+				if pcall(vim.treesitter.start, args.buf) then
+					vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end
+			end,
+		})
 	end,
-	cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
-	keys = {
-		{ "<c-space>", desc = "Increment Selection" },
-		{ "<bs>", desc = "Decrement Selection", mode = "x" },
-	},
-	opts_extend = { "ensure_installed" },
-	opts = {
-		highlight = { enable = true },
-		indent = { enable = true },
-		ensure_installed = {
-			"go",
-			"bash",
-			"c",
-			"diff",
-			"html",
-			"javascript",
-			"jsdoc",
-			"json",
-			"jsonc",
-			"lua",
-			"luadoc",
-			"luap",
-			"markdown",
-			"markdown_inline",
-			"printf",
-			"python",
-			"query",
-			"regex",
-			"toml",
-			"tsx",
-			"typescript",
-			"vim",
-			"vimdoc",
-			"xml",
-			"yaml",
-		},
-		incremental_selection = {
-			enable = true,
-			keymaps = {
-				init_selection = "<C-space>",
-				node_incremental = "<C-space>",
-				scope_incremental = false,
-				node_decremental = "<bs>",
-			},
-		},
-		textobjects = {
-			move = {
-				enable = true,
-				goto_next_start = { ["]f"] = "@function.outer", ["]c"] = "@class.outer", ["]a"] = "@parameter.inner" },
-				goto_next_end = { ["]F"] = "@function.outer", ["]C"] = "@class.outer", ["]A"] = "@parameter.inner" },
-				goto_previous_start = {
-					["[f"] = "@function.outer",
-					["[c"] = "@class.outer",
-					["[a"] = "@parameter.inner",
-				},
-				goto_previous_end = { ["[F"] = "@function.outer", ["[C"] = "@class.outer", ["[A"] = "@parameter.inner" },
-			},
-		},
-	},
 }

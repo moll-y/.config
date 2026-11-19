@@ -1,0 +1,49 @@
+[general]
+import = [
+  "~/.config/alacritty/themes/themes/pastel_dark.toml"
+]
+
+[window]
+opacity = 0.75
+padding = { x = 5, y = 0 } # no top/bottom padding: the tmux bar sits on the bottom edge
+
+[font]
+size = 13
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[font.bold_italic]
+family = "JetBrainsMono Nerd Font"
+style = "Bold Italic"
+
+# Sharper versions of pastel_dark's 16 colors (same hues, more saturated), matching tmux, Neovim and the sway bar.
+# The bash prompt (oh-my-bash "font" theme), ls, git and other terminal programs use these.
+[colors.normal]
+black   = '#616161'
+red     = '#ff4365'
+green   = '#9bd40b'
+yellow  = '#ffc107'
+blue    = '#82aaff'
+magenta = '#e05cf0'
+cyan    = '#00cccc'
+white   = '#f1f1f1'
+
+[colors.bright]
+black   = '#8e8e8e'
+red     = '#ff7088'
+green   = '#b8f03a'
+yellow  = '#ffd54f'
+blue    = '#a5c3ff'
+magenta = '#f08cff'
+cyan    = '#33e6e6'
+white   = '#ffffff'

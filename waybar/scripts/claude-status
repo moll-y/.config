@@ -1,0 +1,64 @@
+#!/bin/sh
+# Waybar module: ONE indicator for all Claude sessions (always pink), showing the most urgent state.
+#   needs (!)          a session asks for permission or a question
+#   working (cyan, noise flicker # % @ $ * &, not bold)  a session is running
+#   done (pink, -)     all sessions wait for my next prompt
+#   π (pink)           no sessions
+# Per-session detail lives in tmux (each window shows its own mark). Data: claude-status-hook.
+# Run with "arrow" for the arrows next to it (same state class, so they change color with it).
+# "watch": keep running; a new line every 0.25s while working (the flicker), else every second.
+dir=${XDG_CACHE_HOME:-$HOME/.cache}/claude-status
+status() {
+	needs=0 working=0 done=0
+	for f in "$dir"/*; do
+		[ -f "$f" ] || continue
+		read -r s pid _ <"$f"
+		# Claude died without SessionEnd: forget the session
+		if [ "$pid" -gt 1 ] 2>/dev/null && ! kill -0 "$pid" 2>/dev/null; then
+			rm -f "$f"
+			continue
+		fi
+		case $s in
+			needs) needs=$((needs + 1)) ;;
+			working) working=$((working + 1)) ;;
+			done) done=$((done + 1)) ;;
+		esac
+	done
+
+	if [ $needs -gt 0 ]; then
+		class=needs text='π !'
+	elif [ $working -gt 0 ]; then
+		class=working text="π <span weight='normal'>$spin</span>" # Pango markup: the spinner is not bold
+	elif [ $done -gt 0 ]; then
+		class=done text='π -'
+	else
+		class=none text='π'
+	fi
+
+	# $1: "arrow" prints only the arrow (its own module, so it can be tall like the other arrows).
+	# Colors for each class are in style.css.
+	[ "$1" = arrow ] && text=$(printf '\356\202\262') # U+E0B2, the arrow
+	tooltip="needs you: $needs   working: $working   done: $done"
+	jq -cn --arg t "$text" --arg tt "$tooltip" --arg c "$class" '{text: $t, tooltip: $tt, class: $c}'
+}
+
+if [ "$1" = watch ]; then
+	# Working: the noise flicker changes 4 times a second.
+	i=0
+	while :; do
+		set -- '#' '%' '@' '$' '*' '&amp;' # & is &amp; in Pango markup
+		shift $((i % 6)); spin=$1
+		status
+		# tmux redraws at most once a second, so push the flicker to it too: @claude-spin, then a redraw
+		if [ "$class" = working ]; then
+			set -- '##' '%' '@' '$' '*' '&' # same order; # is ## in tmux formats
+			shift $((i % 6))
+			tmux set -g @claude-spin "$1" 2>/dev/null &&
+				for c in $(tmux list-clients -F '#{client_name}'); do tmux refresh-client -S -t "$c"; done
+		fi
+		i=$((i + 1))
+		[ "$class" = working ] && sleep 0.25 || sleep 1
+	done
+fi
+spin='#'
+status "$@"
